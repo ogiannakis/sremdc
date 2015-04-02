@@ -1,0 +1,52 @@
+IF keyword_set(SEPEM) THEN BEGIN
+Eqmin=5.d0
+Eqmax=200.d0
+nx_q=10
+dEq=(alog10(Eqmax)-alog10(Eqmin))/(2.d0*nx_q)             ; dEp of each half bin
+nx_q=14
+dEq_b=dblarr(nx_q) &  Eq_b=dblarr(nx_q) & Eq_bin_bou=dblarr(nx_q,2)
+Eq15=10.d0^(alog10(Eqmin)+(findgen(2.d0*nx_q+1))*dEq)       ; E's that define the bin-boundaries and the bin centers
+
+FOR iq=0,nx_q-1 DO BEGIN
+Eq_bin_bou[iq,*]=[Eq15[2*(iq+1)-2],Eq15[2*(iq+1)]] ; BIN BOUNDARIES
+dEq_b[iq]=Eq15[2*(iq+1)]-Eq15[2*(iq+1)-2]  &   Eq_b[iq]=Eq15[2*(iq+1)-1] ;
+ENDFOR 
+
+Eq_bin_bou=Eq_bin_bou[1:13,*]
+Eq_bin_bou(0)=9.d0
+Eq_bin_bou(n_elements(Eq_bin_bou)-1)=800.d0
+dEq_b=dEq_b[1:13]
+Eq_b=Eq_b[1:13]
+dEq_b(0)=Eq_bin_bou[0,1]-Eq_bin_bou[0,0]
+Eq_b(0)=Eq_bin_bou[0,0]+(Eq_bin_bou[0,1]-Eq_bin_bou[0,0])/2.d0
+dEq_b(12)=Eq_bin_bou[12,1]-Eq_bin_bou[12,0]
+Eq_b(12)=Eq_bin_bou[12,0]+(Eq_bin_bou[12,1]-Eq_bin_bou[12,0])/2.d0
+ENDIF ; SEPEM
+
+
+
+ IF keyword_set(logspace) THEN BEGIN
+ Eqmin=min(Emins) & Eqmax=max(Emaxs)
+ dEq=(alog10(Eqmax)-alog10(Eqmin))/(2.d0*nx_q)             ; dEp of each half bin
+ dEq_b=dblarr(nx_q) &  Eq_b=dblarr(nx_q) & Eq_bin_bou=dblarr(nx_q,2)
+ Eq15=10.d0^(alog10(Eqmin)+(findgen(2.d0*nx_q+1))*dEq)       ; E's that define the bin-boundaries and the bin centers
+    FOR iq=0,nx_q-1 DO BEGIN
+    Eq_bin_bou[iq,*]=[Eq15[2*(iq+1)-2],Eq15[2*(iq+1)]] ; BIN BOUNDARIES
+    dEq_b[iq]=Eq15[2*(iq+1)]-Eq15[2*(iq+1)-2]  &   Eq_b[iq]=Eq15[2*(iq+1)-1] ;
+    ENDFOR 
+ ENDIF
+
+  IF keyword_set(linspace) THEN BEGIN
+  Eqmin=min(Emins) & Eqmax=max(Emaxs)
+  dEq=((Eqmax)-(Eqmin))/(2.d0*nx_q)             ; dEp of each half bin
+  dEq_b=dblarr(nx_q) &  Eq_b=dblarr(nx_q) & Eq_bin_bou=dblarr(nx_q,2)
+  Eq15=((Eqmin)+(findgen(2.d0*nx_q+1))*dEq)       ; E's that define the bin-boundaries and the bin centers
+    FOR iq=0,nx_q-1 DO BEGIN
+    Eq_bin_bou[iq,*]=[Eq15[2*(iq+1)-2],Eq15[2*(iq+1)]] ; BIN BOUNDARIES
+    dEq_b[iq]=Eq15[2*(iq+1)]-Eq15[2*(iq+1)-2]  &   Eq_b[iq]=Eq15[2*(iq+1)-1] ;
+  ENDFOR 
+ ENDIF
+ 
+e_f_l=create_struct('Eq_bin_bou',Eq_bin_bou,'dEq_b',dEq_b,'Eq_b',Eq_b)
+RETURN,e_f_l
+
